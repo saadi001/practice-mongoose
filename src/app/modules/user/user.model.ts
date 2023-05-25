@@ -1,7 +1,7 @@
 import { Model, Schema, model } from "mongoose";
-import { IUser, IUserMethods } from "./user.interface";
+import { IUser, IUserMethods, UserModel } from "./user.interface";
 
-type UserModel = Model<IUser, {}, IUserMethods>;
+// type UserModel = Model<IUser, {}, IUserMethods>;
 
 //  creating schema using interface 
 const userSchema = new Schema<IUser, UserModel, IUserMethods>({
@@ -22,12 +22,33 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
      permanentAddress: {type: String, required: true}
    });
 
+  // //  Book schema 
+  // const BookSchema = new Schema<IBook>({
+  //   title: {type: String, required: true},
+  //   author: {type: [String], required: true},
+  //   genre: {type: String, required: true},
+  //   publicationYear: {type: Number, required: true},
+  //   publisher: {
+  //     name: {type: String, required: true},
+  //     location: {type: String, required: true}
+  //   },
+  //   reviews: [{user: {type: String, required: true}, comment: {type: String, required: true}}],
+  //   rating: {type: Number, required: true},
+  //   price: {type: String, required: true}
+  // })
+
+   userSchema.static('getAdminUsers',async function getAdminUsers() {
+    const admins = await this.find({role:"admin"})
+    return admins;
+  });
+
    userSchema.method('fullName', function fullName() {
      return this.name.firstName + ' ' + this.name.lastName;
    });
 
 //    model 
 const User = model<IUser, UserModel>('User', userSchema);
+// const Book = model<IBook>('Book', BookSchema);
 
 
 export default User;
